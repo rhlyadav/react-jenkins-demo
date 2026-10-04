@@ -53,12 +53,12 @@ export default function App() {
           <span aria-hidden="true" className="brand__mark">P</span>
           <span>pipeline<span className="brand__light">lab</span></span>
         </a>
-        <span className="topbar__tag"><span className="status-dot" /> LEARNING PROJECT</span>
+        <span className="topbar__tag"><span className="status-dot" /> LEARNING PROJECT Rahul</span>
       </header>
 
       <section aria-labelledby="page-title" className="hero">
         <p className="eyebrow"><span /> YOUR FIRST CI/CD PIPELINE</p>
-        <h1 id="page-title">Ship with confidence.!!</h1>
+        <h1 id="page-title">Ship with confidence.!! </h1>
         <p className="hero__intro">
           A hands-on path from your first Git push to a containerized app.
           Take it one stage at a time.
