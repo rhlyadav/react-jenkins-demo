@@ -53,7 +53,7 @@ export default function App() {
           <span aria-hidden="true" className="brand__mark">P</span>
           <span>pipeline<span className="brand__light">lab</span></span>
         </a>
-        <span className="topbar__tag"><span className="status-dot" /> LEARNING PROJECT Rahul</span>
+        <span className="topbar__tag"><span className="status-dot" /> LEARNING PROJECT!!</span>
       </header>
 
       <section aria-labelledby="page-title" className="hero">
