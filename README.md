@@ -29,14 +29,10 @@ npm run lint
 npm run test:run
 npm run build
 docker build -t react-jenkins-demo .
-docker run -p 8080:80 react-jenkins-demo
-
-#if already running use below
-docker build -t react-jenkins-demo .
-docker run --rm -p 8080:80 react-jenkins-demo
+docker run --rm -p 8081:80 react-jenkins-demo
 ```
 
-While the last command is running, open [http://localhost:8080](http://localhost:8080). Press `Ctrl+C` in the terminal to stop the container. If port 8080 is already in use, change the host-side port, for example `-p 8081:80`, and open `http://localhost:8081`.
+Open [http://localhost:8081](http://localhost:8081) while the container is running. The host port is 8081 because Jenkins uses 8080. Press `Ctrl+C` in the terminal to stop the container. If port 8081 is also in use, change the host-side port, for example `-p 8082:80`, and open `http://localhost:8082`.
 
 `npm run test` starts Vitest in watch mode for development. Use `npm run test:run` for a single, CI-friendly test run.
 
@@ -54,7 +50,7 @@ While the last command is running, open [http://localhost:8080](http://localhost
 | `package.json` / `package-lock.json` | Dependencies and the npm scripts used locally and by CI. |
 | `Dockerfile` | Multi-stage build: Node compiles the app; Nginx serves the production files. |
 | `nginx.conf` | Nginx static-file and single-page-app fallback configuration. |
-| `Jenkinsfile` | Declarative CI pipeline for checkout, npm checks, app build, and Docker image build. |
+| `Jenkinsfile` | Declarative pipeline for checkout, npm checks, app and Docker builds, container deployment, and a deployment smoke test. |
 | `.dockerignore` / `.gitignore` | Keep generated files and local dependencies out of Docker builds and Git. |
 
 ## Docker notes
@@ -70,8 +66,10 @@ The image uses `node:22-alpine` only in the build stage. The final image is base
 
 ## Jenkins pipeline
 
-The root `Jenkinsfile` defines a Declarative Pipeline with separate stages for checkout, dependency installation, lint, tests, the production app build, and Docker image creation. In Jenkins, create a Pipeline job configured to use this repository and its `Jenkinsfile`; you can run it manually with **Build Now**.
+The root `Jenkinsfile` defines a Declarative Pipeline with separate stages for checkout, dependency installation, lint, tests, the production app build, Docker image creation, and local container deployment. In Jenkins, create a Pipeline job configured to use this repository and its `Jenkinsfile`; you can run it manually with **Build Now**.
 
-This starter pipeline uses Windows `bat` steps. Its Jenkins agent must be a Windows machine with Node.js 22, npm, and the Docker CLI on `PATH`. Docker Desktop must be running, and the account running the Jenkins agent must be able to access its Docker engine. If Jenkins itself runs in a container, configure a Windows agent with those tools for this pipeline, or adapt the steps for that agent's operating system and Docker access.
+This pipeline uses Windows `bat` steps. Its Jenkins agent must be a Windows machine with Node.js 22, npm, Docker CLI, and `curl.exe` on `PATH`. Docker Desktop must be running, and the account running the Jenkins agent must be able to access its Docker engine. If Jenkins itself runs in a container, configure a Windows agent with those tools for this pipeline, or adapt the steps for that agent's operating system and Docker access.
 
-The Docker stage builds a local image tagged `react-jenkins-demo`; it does not push the image to a registry or deploy it. The next step after trying the pipeline is configuring a GitHub webhook so pushes or pull requests can trigger Jenkins automatically. That webhook is not configured by this project.
+After a successful image build, the pipeline replaces only the container named `react-jenkins-demo-app`, starts the new image on host port 8081, and checks that the app responds successfully at `http://localhost:8081/`. Jenkins continues to use port 8080. Make sure port 8081 is free. A manual **Build Now** or a GitHub-triggered build will replace the app container when all preceding stages pass. Other containers are not touched.
+
+The image is built locally; the pipeline does not push it to a registry. A GitHub webhook can trigger builds automatically after it is configured and the Smee relay is running.
