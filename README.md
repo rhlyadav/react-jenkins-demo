@@ -47,7 +47,9 @@ Open [http://localhost:8081](http://localhost:8081) while the container is runni
 | `src/utils/getCompletionPercentage.test.ts` | Unit tests for progress calculations. |
 | `vite.config.ts` | Vite and Vitest configuration, including the browser-like test environment. |
 | `eslint.config.js` | ESLint flat configuration for TypeScript, React Hooks, and tests. |
-| `package.json` / `package-lock.json` | Dependencies and the npm scripts used locally and by CI. |
+| `package.json` / `package-lock.json` | Dependencies, npm scripts, and the Node.js 22 compatibility range used locally and by CI. |
+| `.npmrc` | Makes npm reject installs when the active Node.js version is outside the declared range. |
+| `.nvmrc` | Selects Node.js 22 when using NVM. |
 | `Dockerfile` | Multi-stage build: Node compiles the app; Nginx serves the production files. |
 | `nginx.conf` | Nginx static-file and single-page-app fallback configuration. |
 | `Jenkinsfile` | Declarative pipeline for checkout, npm checks, app and Docker builds, container deployment, and a deployment smoke test. |
